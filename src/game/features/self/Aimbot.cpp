@@ -26,12 +26,22 @@ namespace YimMenu::Features
 		{
 			if (running) return;
 			running = true;
+			std::set<int> temp_peds = {  };
 			for (Ped ped : Pools::GetPeds())
 			{
+				int currentPedHandle = ped.GetHandle();
+				temp_peds.insert(currentPedHandle);
 				if (!killed_peds.contains(ped.GetHandle()) && !ped.IsPlayer() && ped.IsDead() && ENTITY::HAS_ENTITY_BEEN_DAMAGED_BY_ENTITY(ped.GetHandle(), Self::GetPed().GetHandle(), false))
 				{
-					killed_peds.insert(ped.GetHandle());
+					killed_peds.insert(currentPedHandle);
 					PAD::DISABLE_CONTROL_ACTION(0, 25, true);
+				}
+			}
+			for (int killed_ped_handle : killed_peds)
+			{
+				if (!temp_peds.contains(killed_ped_handle))
+				{
+					killed_peds.erase(killed_ped_handle);
 				}
 			}
 			running = false;
